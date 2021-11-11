@@ -4,7 +4,7 @@ import { Post } from '../Models/Post';
 import { IUser, User } from '../Models/User';
 
 
-const checkId = (id: string | number): boolean => isValidObjectId(id);
+export const checkId = (id: string | number): boolean => isValidObjectId(id);
 
 
 export const savedPost = async (req: Request, res: Response) => {
@@ -34,7 +34,18 @@ export const savedPost = async (req: Request, res: Response) => {
 
 export const getPosts = async (req: Request, res: Response) => {
     try {
-        const posts = await Post.find();
+        const { limit, page } = req.query;
+        const limitQuery = limit && +limit || 10; // convert to number
+        const pageQuery = page && +page || 1; // convert to number
+
+        const options = {
+            limit: limitQuery,
+            page: pageQuery,
+            select: 'username firstName lastName email avatar role createdAt',
+            populate: 'posts'
+        }
+
+        const posts = await User.paginate({ role: 'model' }, options);
 
         res.json(posts);
     } catch (err: any) {
@@ -42,12 +53,12 @@ export const getPosts = async (req: Request, res: Response) => {
     }
 }
 
-export const getPostById = async (req: Request, res: Response) => {
+export const getPostByUser = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const { id } = req.body;
         if (!checkId(id)) return res.status(400).json({ message: 'Error: Invalid Id, operation rejected' });
 
-        const post = await Post.findById(id);
+        const post = await Post.find({ userId: id });
         res.json(post)
     } catch (err: any) {
         console.log('getPostById error', err.message);
@@ -78,6 +89,17 @@ export const deletePost = async (req: Request, res: Response) => {
         await Post.findByIdAndDelete(id);
 
         res.status(202).json({ message: 'Post removed successfully' });
+    } catch (err: any) {
+        console.log('deletePost error', err.message);
+    }
+}
+
+
+export const latestPosts = async (req: Request, res: Response) => {
+    try {
+        const submitPosts = await Post.find().sort({ createdAt: 1 });
+
+        res.json(submitPosts);
     } catch (err: any) {
         console.log('deletePost error', err.message);
     }

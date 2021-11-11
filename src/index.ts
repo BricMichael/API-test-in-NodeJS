@@ -1,9 +1,12 @@
 import express, { Application } from 'express';
 import { config } from 'dotenv';
-import cors from 'cors'
+import cors from 'cors';
+
 //import routes
 import authRoutes from './routes/authRoute';
 import postRoutes from './routes/postRoutes';
+import userRoute from './routes/userRoute';
+
 config();
 //import setting database
 import './database/settings';
@@ -11,14 +14,14 @@ import './database/settings';
 const app: Application = express();
 //middlewares
 app.use(cors());
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 
 //routes
 app.use('/api', authRoutes);
 app.use('/api', postRoutes);
+app.use('/api', userRoute);
 
 
 const port = process.env.PORT || 4000;

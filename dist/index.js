@@ -9,6 +9,7 @@ const cors_1 = __importDefault(require("cors"));
 //import routes
 const authRoute_1 = __importDefault(require("./routes/authRoute"));
 const postRoutes_1 = __importDefault(require("./routes/postRoutes"));
+const userRoute_1 = __importDefault(require("./routes/userRoute"));
 (0, dotenv_1.config)();
 //import setting database
 require("./database/settings");
@@ -20,5 +21,6 @@ app.use(express_1.default.urlencoded({ extended: false }));
 //routes
 app.use('/api', authRoute_1.default);
 app.use('/api', postRoutes_1.default);
+app.use('/api', userRoute_1.default);
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Server running on port ${port}`));

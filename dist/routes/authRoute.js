@@ -25,5 +25,4 @@ const uploadAvatarUser_1 = require("../helpers/uploadAvatarUser");
 const router = (0, express_1.Router)();
 router.post('/auth/singUp', uploadAvatarUser_1.upload.single('avatar'), ctrlAuth.singUp);
 router.post('/auth/singIn', ctrlAuth.singIn);
-router.get('/auth/profile', ctrlAuth.profile);
 exports.default = router;

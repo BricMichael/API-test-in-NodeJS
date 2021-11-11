@@ -1,4 +1,4 @@
-import multer, { Multer } from 'multer';
+import multer from 'multer';
 import path from 'path';
 
 const storage = multer.diskStorage({
@@ -12,4 +12,4 @@ const storage = multer.diskStorage({
 })
 
 
-export const upload: Multer = multer({ storage });
+export const upload = multer({ storage });

@@ -8,16 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const User_1 = require("../Models/User");
 const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = req.headers['x-access-token'];
-        console.log(token);
+        const token = req.header('x-access-token');
+        if (!token)
+            return res.status(403).json({ message: 'Access denied' });
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY || 'secretKey');
+        const userFound = yield User_1.User.findById(decoded.id, { password: 0 });
+        if (!userFound)
+            res.status(404).json({ message: 'No user found' });
+        if (userFound)
+            req.role = userFound.role;
         next();
     }
     catch (error) {
-        console.log(error.message);
+        res.status(404).json({ error: 'Malformed or invalid token, access denied.' });
+        console.log('Error: verifyToken =>', error.message);
     }
 });
 exports.verifyToken = verifyToken;

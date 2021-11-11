@@ -9,15 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePost = exports.updatePost = exports.getPostById = exports.getPosts = exports.savedPost = void 0;
+exports.latestPosts = exports.deletePost = exports.updatePost = exports.getPostByUser = exports.getPosts = exports.savedPost = exports.checkId = void 0;
 const mongoose_1 = require("mongoose");
 const Post_1 = require("../Models/Post");
 const User_1 = require("../Models/User");
 const checkId = (id) => (0, mongoose_1.isValidObjectId)(id);
+exports.checkId = checkId;
 const savedPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { mediaUrl, description, userId } = req.body;
-        if (!userId || !checkId(userId))
+        if (!userId || !(0, exports.checkId)(userId))
             return res.status(400).json({ message: 'Error: Invalid Id, operation rejected' });
         if (!description)
             return res.status(400).json({ message: 'Error: You must enter a description' });
@@ -40,7 +41,16 @@ const savedPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.savedPost = savedPost;
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const posts = yield Post_1.Post.find();
+        const { limit, page } = req.query;
+        const limitQuery = limit && +limit || 10; // convert to number
+        const pageQuery = page && +page || 1; // convert to number
+        const options = {
+            limit: limitQuery,
+            page: pageQuery,
+            select: 'username firstName lastName email avatar role createdAt',
+            populate: 'posts'
+        };
+        const posts = yield User_1.User.paginate({ role: 'model' }, options);
         res.json(posts);
     }
     catch (err) {
@@ -48,23 +58,23 @@ const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getPosts = getPosts;
-const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPostByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        if (!checkId(id))
+        const { id } = req.body;
+        if (!(0, exports.checkId)(id))
             return res.status(400).json({ message: 'Error: Invalid Id, operation rejected' });
-        const post = yield Post_1.Post.findById(id);
+        const post = yield Post_1.Post.find({ userId: id });
         res.json(post);
     }
     catch (err) {
         console.log('getPostById error', err.message);
     }
 });
-exports.getPostById = getPostById;
+exports.getPostByUser = getPostByUser;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        if (!checkId(id))
+        if (!(0, exports.checkId)(id))
             return res.status(400).json({ message: 'Error: Invalid Id, operation rejected' });
         if (!req.body.description)
             return res.status(400).json({ message: 'Error: You must enter a description' });
@@ -79,7 +89,7 @@ exports.updatePost = updatePost;
 const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        if (!checkId(id))
+        if (!(0, exports.checkId)(id))
             return res.status(400).json({ message: 'Error: Invalid Id, operation rejected' });
         yield Post_1.Post.findByIdAndDelete(id);
         res.status(202).json({ message: 'Post removed successfully' });
@@ -89,3 +99,13 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deletePost = deletePost;
+const latestPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const submitPosts = yield Post_1.Post.find().sort({ createdAt: 1 });
+        res.json(submitPosts);
+    }
+    catch (err) {
+        console.log('deletePost error', err.message);
+    }
+});
+exports.latestPosts = latestPosts;

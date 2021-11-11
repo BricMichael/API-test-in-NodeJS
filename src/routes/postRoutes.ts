@@ -3,13 +3,15 @@ const router = Router();
 
 import * as ctrlPost from '../controllers/postControllers';
 import { verifyToken } from '../middlewares/authToken';
+import { validateRole } from '../middlewares/validateRole';
 
 
-router.post('/post', verifyToken, ctrlPost.savedPost);
+router.post('/post', [verifyToken, validateRole], ctrlPost.savedPost);
 router.get('/post', ctrlPost.getPosts);
-router.get('/post/:id', ctrlPost.getPostById);
-router.put('/post/:id', ctrlPost.updatePost);
-router.delete('/post/:id', ctrlPost.deletePost);
+router.post('/post-users', ctrlPost.getPostByUser);
+router.get('/post-latest', ctrlPost.latestPosts);
+router.put('/post/:id', [verifyToken, validateRole], ctrlPost.updatePost);
+router.delete('/post/:id', [verifyToken, validateRole], ctrlPost.deletePost);
 
 
 

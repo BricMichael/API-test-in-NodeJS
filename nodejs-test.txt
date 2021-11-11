@@ -1,0 +1,20 @@
+NodeJS Test
+
+Information:
+Run the test with <npm run dev>.
+
+saved user: username, first name, last name, profile image and role.
+The profile picture was saved in the Avatars folder, and its address in the database*. "in a real project it must be saved in the cloud".
+
+** highlight: If I put enctype = "multipart / form-data" in the form, it uploads the file to the server but it doesn't insert the name into the database. If I remove enctype = "multipart / form-data" from the form, it inserts the filename correctly into the database but doesn't upload the physical file to the server.
+
+**For that reason i couldn't handle custom middlewres as req.body object came to me empty.In case there was an error registering the user, I delete the photo immediately.
+
+I upload the .env file for testing purposes.
+
+The dist folder, it should have a subfolder called Avatars to save the peripheral photos of the users.
+ 
+
+
+I once again express my interest in the position and my infinite appreciation for these tests.
+Michael.

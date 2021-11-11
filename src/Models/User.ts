@@ -1,4 +1,5 @@
 import { Document, Schema, model } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import bcrypt from 'bcryptjs';
 
 
@@ -55,7 +56,7 @@ const userSchema: Schema = new Schema({
         type: String,
         lowercase: true
     },
-    posts: [  // a populate hay que pasarle el name de esta propiedad para que le agg valores
+    posts: [
         { type: Schema.Types.ObjectId, ref: 'Post' }
     ]
 
@@ -73,6 +74,7 @@ userSchema.methods.comparePassword = async (receivedPassword: string, passwordSa
     return await bcrypt.compare(receivedPassword, passwordSaved);
 }
 
+userSchema.plugin(mongoosePaginate);
 
 export const User = model<IUserMethods>('User', userSchema);
 

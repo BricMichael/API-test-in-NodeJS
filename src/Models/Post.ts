@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 
+
 export interface IPost {
     mediaUrl: string
     description: string
@@ -21,5 +22,6 @@ const postSchema = new Schema<IPost>({
 },
     { timestamps: true, versionKey: false }
 );
+
 
 export const Post = model<IPost>('Post', postSchema);
