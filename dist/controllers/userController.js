@@ -51,7 +51,8 @@ const getUsersByUsername = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const { username } = req.body;
         const hideFields = { email: 0, password: 0, updatedAt: 0 };
-        const userFound = yield User_1.User.find({ username: { $regex: username.trim(), $options: 'i' } }, hideFields);
+        const characters = { $regex: username.trim(), $options: 'i' };
+        const userFound = yield User_1.User.find({ $or: [{ username: characters }, { firstName: characters }, { lastName: characters }] }, hideFields);
         if (!userFound.length)
             return res.json({ message: 'No results found' });
         return res.json(userFound);

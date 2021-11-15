@@ -43,7 +43,12 @@ export const getUsersByUsername = async (req: Request, res: Response) => {
         const { username } = req.body;
 
         const hideFields = { email: 0, password: 0, updatedAt: 0 };
-        const userFound = await User.find({ username: { $regex: username.trim(), $options: 'i' } }, hideFields);
+        const characters = { $regex: username.trim(), $options: 'i' };
+
+        const userFound = await User.find(
+            { $or: [{ username: characters }, { firstName: characters }, { lastName: characters }] },
+            hideFields
+        );
 
         if (!userFound.length) return res.json({ message: 'No results found' });
 
