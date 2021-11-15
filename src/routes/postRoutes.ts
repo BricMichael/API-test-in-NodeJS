@@ -9,10 +9,7 @@ import { validateRole } from '../middlewares/validateRole';
 router.post('/post', [verifyToken, validateRole], ctrlPost.savedPost);
 router.get('/post', ctrlPost.getPosts);
 router.post('/post-users', ctrlPost.getPostByUser);
-router.get('/post-latest', ctrlPost.latestPosts);
 router.put('/post/:id', [verifyToken, validateRole], ctrlPost.updatePost);
 router.delete('/post/:id', [verifyToken, validateRole], ctrlPost.deletePost);
-
-
 
 export default router;

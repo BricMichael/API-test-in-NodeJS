@@ -27,7 +27,6 @@ const validateRole_1 = require("../middlewares/validateRole");
 router.post('/post', [authToken_1.verifyToken, validateRole_1.validateRole], ctrlPost.savedPost);
 router.get('/post', ctrlPost.getPosts);
 router.post('/post-users', ctrlPost.getPostByUser);
-router.get('/post-latest', ctrlPost.latestPosts);
 router.put('/post/:id', [authToken_1.verifyToken, validateRole_1.validateRole], ctrlPost.updatePost);
 router.delete('/post/:id', [authToken_1.verifyToken, validateRole_1.validateRole], ctrlPost.deletePost);
 exports.default = router;

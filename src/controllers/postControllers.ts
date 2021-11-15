@@ -94,13 +94,3 @@ export const deletePost = async (req: Request, res: Response) => {
     }
 }
 
-
-export const latestPosts = async (req: Request, res: Response) => {
-    try {
-        const submitPosts = await Post.find().sort({ createdAt: 1 });
-
-        res.json(submitPosts);
-    } catch (err: any) {
-        console.log('deletePost error', err.message);
-    }
-}

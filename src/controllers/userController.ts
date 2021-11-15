@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { Schema } from 'mongoose';
 import { checkRol } from '../helpers/checkRol';
 import { Post } from '../Models/Post';
 import { User } from '../Models/User';
@@ -39,22 +38,29 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 }
 
-export const getUsersByRole = async (req: Request, res: Response) => {
+export const getUsersByUsername = async (req: Request, res: Response) => {
     try {
-        const { role } = req.body;
-        const roles = ['user', 'model'];
+        const { username } = req.body;
 
-        for (let i = 0; i < roles.length; i++) {
-            if (roles[i].includes(role[0]?.toLowerCase())) {
-                // if the first letter matches the search is good, the following letters do not affect.
-                const usernames = await User.find({ role: roles[i] });
-                return res.json(usernames);
-            }
-        }
+        const hideFields = { email: 0, password: 0, updatedAt: 0 };
+        const userFound = await User.find({ username: { $regex: username.trim(), $options: 'i' } }, hideFields);
 
-        return res.status(400).json({ error: 'Invalid role' });
+        if (!userFound.length) return res.json({ message: 'No results found' });
+
+        return res.json(userFound);
     } catch (err: any) {
-        console.log('deletePost error', err.message);
+        console.log('getUsersByUsername', err.message);
     }
 }
 
+
+export const getModelsEmail = async (req: Request, res: Response) => {
+    try {
+        const allUsers = await User.find();
+        const modelsEmail = allUsers.filter(user => user.role === 'model').map(user => ({ email: user.email }));
+
+        res.json(modelsEmail);
+    } catch (err: any) {
+        console.log('getModelsEmail', err.message);
+    }
+}

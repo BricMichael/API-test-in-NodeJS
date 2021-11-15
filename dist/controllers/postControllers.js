@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.latestPosts = exports.deletePost = exports.updatePost = exports.getPostByUser = exports.getPosts = exports.savedPost = exports.checkId = void 0;
+exports.deletePost = exports.updatePost = exports.getPostByUser = exports.getPosts = exports.savedPost = exports.checkId = void 0;
 const mongoose_1 = require("mongoose");
 const Post_1 = require("../Models/Post");
 const User_1 = require("../Models/User");
@@ -99,13 +99,3 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deletePost = deletePost;
-const latestPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const submitPosts = yield Post_1.Post.find().sort({ createdAt: 1 });
-        res.json(submitPosts);
-    }
-    catch (err) {
-        console.log('deletePost error', err.message);
-    }
-});
-exports.latestPosts = latestPosts;

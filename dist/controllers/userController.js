@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsersByRole = exports.deleteUser = exports.subscribeToRole = void 0;
+exports.getModelsEmail = exports.getUsersByUsername = exports.deleteUser = exports.subscribeToRole = void 0;
 const checkRol_1 = require("../helpers/checkRol");
 const Post_1 = require("../Models/Post");
 const User_1 = require("../Models/User");
@@ -47,22 +47,28 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteUser = deleteUser;
-const getUsersByRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+const getUsersByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { role } = req.body;
-        const roles = ['user', 'model'];
-        for (let i = 0; i < roles.length; i++) {
-            if (roles[i].includes((_b = role[0]) === null || _b === void 0 ? void 0 : _b.toLowerCase())) {
-                // if the first letter matches the search is good, the following letters do not affect.
-                const usernames = yield User_1.User.find({ role: roles[i] });
-                return res.json(usernames);
-            }
-        }
-        return res.status(400).json({ error: 'Invalid role' });
+        const { username } = req.body;
+        const hideFields = { email: 0, password: 0, updatedAt: 0 };
+        const userFound = yield User_1.User.find({ username: { $regex: username.trim(), $options: 'i' } }, hideFields);
+        if (!userFound.length)
+            return res.json({ message: 'No results found' });
+        return res.json(userFound);
     }
     catch (err) {
-        console.log('deletePost error', err.message);
+        console.log('getUsersByUsername', err.message);
     }
 });
-exports.getUsersByRole = getUsersByRole;
+exports.getUsersByUsername = getUsersByUsername;
+const getModelsEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allUsers = yield User_1.User.find();
+        const modelsEmail = allUsers.filter(user => user.role === 'model').map(user => ({ email: user.email }));
+        res.json(modelsEmail);
+    }
+    catch (err) {
+        console.log('getModelsEmail', err.message);
+    }
+});
+exports.getModelsEmail = getModelsEmail;
